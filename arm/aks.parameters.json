@@ -1,0 +1,23 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "clusterName": {
+            "value": "xandsaks"
+        },
+        "nodeCount": {
+            "value": 1
+        },
+        "servicePrincipalSecret": {
+            "reference": {
+                "keyVault": {
+                    "id": "/subscriptions/f616efc7-d17b-49b5-9686-be4e2bc05cce/resourceGroups/aks-common/providers/Microsoft.KeyVault/vaults/xandsaksvault"
+                },
+                "secretName": "spnsecret"
+            }
+        },
+        "logAnalyticsName": {
+            "value": "xandsaks-logs"
+        }
+    }
+}

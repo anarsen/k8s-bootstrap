@@ -1,0 +1,69 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "servicePrincipalSecret": {
+            "type": "securestring"
+        },
+        "clusterName": {
+            "type": "string"
+        },
+        "nodeCount": {
+            "type": "int"
+        },
+        "logAnalyticsName": {
+            "type": "string"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "name": "[parameters('logAnalyticsName')]",
+            "apiVersion": "2015-11-01-preview",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "sku": {
+                    "name": "PerNode"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.ContainerService/managedClusters",
+            "apiVersion": "2019-06-01",
+            "name": "[parameters('clusterName')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[parameters('logAnalyticsName')]"
+            ],
+            "properties": {
+                "kubernetesVersion": "1.13.7",
+                "dnsPrefix": "[parameters('clusterName')]",
+                "agentPoolProfiles": [
+                    {
+                        "name": "pool1",
+                        "count": "[parameters('nodeCount')]",
+                        "vmSize": "Standard_B2s",
+                        "osType": "Linux",
+                        "storageProfile": "ManagedDisks",
+                        "type": "AvailabilitySet"
+                    }
+                ],
+                "enableRBAC": true,
+                "servicePrincipalProfile": {
+                    "ClientId": "a9f33620-55c9-4be0-bcea-59cbe6cb538e",
+                    "Secret": "[parameters('servicePrincipalSecret')]"
+                },
+                "addonProfiles": {
+                    "omsagent": {
+                        "enabled": true,
+                        "config": {
+                            "logAnalyticsWorkspaceResourceID": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsName'))]"
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}
