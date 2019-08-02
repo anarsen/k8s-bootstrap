@@ -51,8 +51,8 @@
                 ],
                 "enableRBAC": true,
                 "servicePrincipalProfile": {
-                    "ClientId": "a9f33620-55c9-4be0-bcea-59cbe6cb538e",
-                    "Secret": "[parameters('servicePrincipalSecret')]"
+                    "clientId": "a9f33620-55c9-4be0-bcea-59cbe6cb538e",
+                    "secret": "[parameters('servicePrincipalSecret')]"
                 },
                 "addonProfiles": {
                     "omsagent": {
